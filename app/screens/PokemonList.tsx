@@ -1,14 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+
 import React, { useEffect, useState } from "react";
-import {
-  FlatList,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import { RootStackParamList } from "../../navigation/types";
 import { getPokemonList } from "../../services/pokeApi";
 
@@ -39,7 +33,10 @@ const PokemonList = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <Text>Loading...</Text>;
+  if (loading)
+    return (
+      <Text className="flex-1 items-center justify-center">Loading...</Text>
+    );
 
   const renderItem = ({ item }: { item: PokemonListItem }) => {
     const id = getIdFromUrl(item.url);
@@ -47,74 +44,39 @@ const PokemonList = () => {
 
     return (
       <TouchableOpacity
-        style={styles.pokemonItem}
         onPress={() =>
           navigation.navigate("PokemonDetail", {
             url: item.url,
             name: item.name,
           })
         }
+        className="bg-white rounded-2xl shadow m-2 p-4 flex-row items-center w-full"
       >
-        <Image source={{ uri: imageUrl }} style={styles.pokemonImage} />
-        <Text style={styles.pokemonName}>{item.name}</Text>
+        <View className="bg-gray-300  rounded-2xl p-2 mr-4">
+          <Image source={{ uri: imageUrl }} className="w-20 h-20 mx-6" />
+        </View>
+
+        <Text className="text-black font-extrabold capitalize flex-1 px-12 text-xl">
+          {item.name}
+        </Text>
       </TouchableOpacity>
     );
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Pokedex</Text>
+    <View className="bg-orange-500 items-center pt-8 h-full">
+      <Text className="text-white font-extrabold uppercase m-8 text-4xl">
+        Pokedex
+      </Text>
       <FlatList
         data={pokemonList}
         keyExtractor={(item) => item.name}
         renderItem={renderItem}
-        contentContainerStyle={styles.listContainer}
+        className="w-full px-4"
+        contentContainerStyle={{ alignItems: "center" }}
       />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-    paddingTop: 40,
-    paddingHorizontal: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#CC0000",
-    textAlign: "center",
-    marginBottom: 16,
-    fontFamily: "PokemonSolid",
-  },
-  listContainer: {
-    paddingBottom: 20,
-  },
-  pokemonItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
-    padding: 12,
-    marginBottom: 10,
-    borderRadius: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  pokemonImage: {
-    width: 50,
-    height: 50,
-    marginRight: 12,
-  },
-  pokemonName: {
-    fontSize: 18,
-    color: "#333",
-    textTransform: "capitalize",
-  },
-});
 
 export default PokemonList;
